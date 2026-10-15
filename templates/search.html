@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Find Donors — Blood Donor Locator{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card custom-card p-4 p-md-5">
+            <div class="text-center mb-4">
+                <div class="mb-2">
+                    <i class="bi bi-search-heart text-danger fs-1"></i>
+                </div>
+                <h2 class="fw-bold">Locate Blood Donors</h2>
+                <p class="text-muted small">
+                    Select a blood group and target city to query matching donor records from the Redis Set index.
+                </p>
+            </div>
+
+            <form action="{{ url_for('search') }}" method="POST">
+                <!-- Blood Group Selection -->
+                <div class="mb-3">
+                    <label for="group" class="form-label fw-semibold">Required Blood Group <span class="text-danger">*</span></label>
+                    <select class="form-select form-select-lg" id="group" name="group" required>
+                        <option value="" disabled selected>-- Select Blood Group --</option>
+                        {% for bg in blood_groups %}
+                            <option value="{{ bg }}">{{ bg }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- City Selection -->
+                <div class="mb-4">
+                    <label for="city" class="form-label fw-semibold">City Location <span class="text-danger">*</span></label>
+                    <select class="form-select form-select-lg" id="city" name="city" required>
+                        <option value="" disabled selected>-- Select City --</option>
+                        {% for city in cities %}
+                            <option value="{{ city }}">{{ city }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-blood py-2 fs-5">
+                        <i class="bi bi-search me-1"></i> Search Matching Donors
+                    </button>
+                    <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                        Back to Home
+                    </a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

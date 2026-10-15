@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Verify OTP — Blood Donor Locator{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-7 col-lg-5">
+        <div class="card custom-card p-4 p-md-5 text-center">
+            <div class="mb-3">
+                <i class="bi bi-shield-lock-fill text-danger fs-1"></i>
+            </div>
+            <h2 class="fw-bold mb-1">Verify Mobile</h2>
+            <p class="text-muted small mb-4">
+                A 6-digit verification code was dispatched to: <br>
+                <strong class="text-dark fs-5">+91 {{ mobile }}</strong>
+            </p>
+
+            <!-- Countdown Timer Container -->
+            <div class="countdown-box mb-4">
+                <span class="text-muted small text-uppercase fw-semibold d-block mb-1">OTP Time Remaining</span>
+                <div id="countdown" class="countdown-timer">--:--</div>
+                <div id="timer-status" class="text-muted small mt-1">Please enter the code within {{ ttl }} seconds</div>
+            </div>
+
+            <!-- OTP Form -->
+            <form action="{{ url_for('verify') }}" method="POST" id="verifyForm">
+                <div class="mb-4">
+                    <label for="otp" class="form-label fw-semibold">Enter 6-Digit OTP</label>
+                    <input type="text" 
+                           class="form-control form-control-lg text-center fw-bold fs-3 letter-spacing-2" 
+                           id="otp" 
+                           name="otp" 
+                           required 
+                           pattern="[0-9]{6}" 
+                           maxlength="6" 
+                           placeholder="······"
+                           autocomplete="one-time-code"
+                           autofocus>
+                    <div class="form-text small mt-2">
+                        Please enter the 6-digit verification code sent to your phone.
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" id="verifyBtn" class="btn btn-blood py-2">
+                        <i class="bi bi-check2-circle me-1"></i> Verify OTP & Register
+                    </button>
+                    <a href="{{ url_for('register') }}" class="btn btn-outline-secondary">
+                        Cancel & Start Over
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let remainingSeconds = parseInt("{{ ttl }}", 10);
+        const countdownEl = document.getElementById("countdown");
+        const timerStatusEl = document.getElementById("timer-status");
+        const verifyBtn = document.getElementById("verifyBtn");
+        const otpInput = document.getElementById("otp");
+
+        function updateDisplay() {
+            if (remainingSeconds <= 0) {
+                countdownEl.textContent = "00:00";
+                countdownEl.classList.add("text-secondary");
+                countdownEl.classList.remove("text-danger");
+                timerStatusEl.innerHTML = "<span class='text-danger fw-bold'>OTP Expired! Redirecting to registration...</span>";
+                if (verifyBtn) verifyBtn.disabled = true;
+                if (otpInput) otpInput.disabled = true;
+                
+                // Automatically redirect to register after a brief pause
+                setTimeout(function () {
+                    window.location.href = "{{ url_for('verify') }}";
+                }, 1500);
+                return;
+            }
+
+            const minutes = Math.floor(remainingSeconds / 60);
+            const seconds = remainingSeconds % 60;
+            countdownEl.textContent = 
+                String(minutes).padStart(2, '0') + ":" + 
+                String(seconds).padStart(2, '0');
+            remainingSeconds--;
+        }
+
+        updateDisplay();
+        const timerInterval = setInterval(function () {
+            if (remainingSeconds < 0) {
+                clearInterval(timerInterval);
+            } else {
+                updateDisplay();
+            }
+        }, 1000);
+    });
+</script>
+{% endblock %}

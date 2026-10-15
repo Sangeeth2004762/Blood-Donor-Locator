@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Update Donor #{{ donor.id }} — Blood Donor Locator{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card custom-card p-4 p-md-5">
+            <div class="text-center mb-4">
+                <div class="mb-2">
+                    <i class="bi bi-pencil-square text-danger fs-1"></i>
+                </div>
+                <h2 class="fw-bold">Update Donor Profile</h2>
+                <span class="badge bg-secondary px-3 py-2 fs-6">Donor ID #{{ donor.id }}</span>
+            </div>
+
+            <form action="{{ url_for('update', donor_id=donor.id) }}" method="POST" novalidate>
+                <!-- Full Name -->
+                <div class="mb-3">
+                    <label for="name" class="form-label fw-semibold">Full Name <span class="text-danger">*</span></label>
+                    <input type="text" 
+                           class="form-control {% if errors.get('name') %}is-invalid{% endif %}" 
+                           id="name" 
+                           name="name" 
+                           required 
+                           pattern="[A-Za-z .]{2,50}" 
+                           value="{{ donor.get('name', '') }}">
+                    {% if errors.get('name') %}
+                        <div class="invalid-feedback d-block">{{ errors['name'] }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Age -->
+                <div class="mb-3">
+                    <label for="age" class="form-label fw-semibold">Age (18 – 60) <span class="text-danger">*</span></label>
+                    <input type="number" 
+                           class="form-control {% if errors.get('age') %}is-invalid{% endif %}" 
+                           id="age" 
+                           name="age" 
+                           required 
+                           min="18" 
+                           max="60" 
+                           value="{{ donor.get('age', '') }}">
+                    {% if errors.get('age') %}
+                        <div class="invalid-feedback d-block">{{ errors['age'] }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- Blood Group Dropdown -->
+                <div class="mb-3">
+                    <label for="group" class="form-label fw-semibold">Blood Group <span class="text-danger">*</span></label>
+                    <select class="form-select {% if errors.get('group') %}is-invalid{% endif %}" 
+                            id="group" 
+                            name="group" 
+                            required>
+                        {% for bg in blood_groups %}
+                            <option value="{{ bg }}" {% if donor.get('group') == bg %}selected{% endif %}>{{ bg }}</option>
+                        {% endfor %}
+                    </select>
+                    {% if errors.get('group') %}
+                        <div class="invalid-feedback d-block">{{ errors['group'] }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- City Dropdown -->
+                <div class="mb-3">
+                    <label for="city" class="form-label fw-semibold">City <span class="text-danger">*</span></label>
+                    <select class="form-select {% if errors.get('city') %}is-invalid{% endif %}" 
+                            id="city" 
+                            name="city" 
+                            required>
+                        {% for city in cities %}
+                            <option value="{{ city }}" {% if donor.get('city') == city %}selected{% endif %}>{{ city }}</option>
+                        {% endfor %}
+                    </select>
+                    {% if errors.get('city') %}
+                        <div class="invalid-feedback d-block">{{ errors['city'] }}</div>
+                    {% endif %}
+                </div>
+
+                <!-- 10-Digit Mobile (Read-Only) -->
+                <div class="mb-4">
+                    <label for="mobile" class="form-label fw-semibold">Mobile Number</label>
+                    <input type="text" 
+                           class="form-control bg-light text-muted" 
+                           id="mobile" 
+                           name="mobile" 
+                           value="{{ donor.get('mobile', '') }}" 
+                           readonly>
+                    <div class="form-text small">
+                        <i class="bi bi-lock-fill me-1 text-secondary"></i>Mobile number cannot be changed once verified.
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-blood py-2">
+                        <i class="bi bi-save me-1"></i> Save Changes
+                    </button>
+                    <a href="{{ url_for('admin') }}" class="btn btn-outline-secondary">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

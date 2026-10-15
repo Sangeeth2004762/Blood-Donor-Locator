@@ -1,0 +1,135 @@
+/* 
+ * style.css
+ * Custom styles for Blood Donor Locator
+ */
+
+:root {
+    --primary-red: #c5221f;
+    --primary-dark: #8b0000;
+    --secondary-crimson: #a01a18;
+    --light-bg: #f8f9fa;
+    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+    --hover-shadow: 0 8px 25px rgba(197, 34, 31, 0.15);
+}
+
+body {
+    background-color: #fdfdfd;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #2c3e50;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-content {
+    flex: 1 0 auto;
+}
+
+footer {
+    flex-shrink: 0;
+}
+
+/* Navbar */
+.navbar-custom {
+    background: linear-gradient(135deg, var(--primary-red), var(--primary-dark));
+}
+
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+/* Cards */
+.custom-card {
+    border: none;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.custom-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--hover-shadow);
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    color: var(--primary-red);
+}
+
+/* Redis query badge / debug box */
+.redis-key-badge {
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    background-color: #212529;
+    color: #00ffcc;
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    display: inline-block;
+}
+
+/* Countdown Clock Display */
+.countdown-box {
+    background: #fff5f5;
+    border: 2px dashed var(--primary-red);
+    border-radius: 12px;
+    padding: 1.25rem;
+    text-align: center;
+}
+
+.countdown-timer {
+    font-size: 2.75rem;
+    font-weight: 800;
+    color: var(--primary-red);
+    font-family: "Courier New", Courier, monospace;
+}
+
+/* Buttons */
+.btn-blood {
+    background-color: var(--primary-red);
+    border-color: var(--primary-red);
+    color: #ffffff;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 0.5rem 1.25rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-blood:hover, .btn-blood:focus {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(197, 34, 31, 0.3);
+}
+
+.btn-outline-blood {
+    color: var(--primary-red);
+    border-color: var(--primary-red);
+    font-weight: 600;
+    border-radius: 8px;
+}
+
+.btn-outline-blood:hover {
+    background-color: var(--primary-red);
+    border-color: var(--primary-red);
+    color: #ffffff;
+}
+
+/* Stat Cards */
+.stat-card {
+    border-left: 5px solid var(--primary-red);
+}
+
+/* Badges */
+.badge-status {
+    padding: 0.45em 0.85em;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 20px;
+}
+
+/* Table styling */
+.table-hover tbody tr:hover {
+    background-color: rgba(197, 34, 31, 0.03);
+}

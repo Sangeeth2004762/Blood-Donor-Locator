@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Redis Connection Error (503) — Blood Donor Locator{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card custom-card border-danger p-4 p-md-5 text-center">
+            <div class="mb-3">
+                <i class="bi bi-database-fill-slash text-danger" style="font-size: 4rem;"></i>
+            </div>
+            <span class="badge bg-danger px-3 py-2 text-uppercase fw-semibold mb-2">503 Service Unavailable</span>
+            <h3 class="fw-bold text-dark mb-2">Cannot connect to Redis on localhost:6379</h3>
+            <p class="text-muted small mb-4">
+                The Blood Donor Locator application relies purely on Redis as its sole in-memory data store.
+                The Redis server is either stopped or unreachable on <code>127.0.0.1:6379</code>.
+            </p>
+
+            <div class="bg-light p-3 rounded-3 text-start mb-4 border">
+                <span class="fw-semibold small text-dark d-block mb-1">
+                    <i class="bi bi-terminal-fill me-1"></i> Start Redis Server Command:
+                </span>
+                <pre class="bg-dark text-white p-2 rounded mb-2 font-monospace"><code>redis-server</code></pre>
+                <small class="text-secondary">Or in PowerShell (if installed as a Windows service):</small>
+                <pre class="bg-dark text-warning p-2 rounded mb-0 font-monospace"><code>Start-Service Redis</code></pre>
+            </div>
+
+            <div class="d-grid gap-2">
+                <a href="{{ request.path }}" class="btn btn-blood py-2">
+                    <i class="bi bi-arrow-clockwise me-1"></i> Retry Connection
+                </a>
+                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                    Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

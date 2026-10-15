@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard & Stats — Blood Donor Locator{% endblock %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-md-8">
+        <h2 class="fw-bold mb-1">Administrative Dashboard</h2>
+        <p class="text-muted mb-0">Live donor statistics, blood group distribution, and records management.</p>
+    </div>
+    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+        <a href="{{ url_for('register') }}" class="btn btn-blood">
+            <i class="bi bi-plus-circle me-1"></i> Add New Donor
+        </a>
+    </div>
+</div>
+
+<!-- Three Metric Cards -->
+<div class="row g-4 mb-4">
+    <!-- Stat 1: Total Donors -->
+    <div class="col-md-4">
+        <div class="card custom-card stat-card p-3 p-lg-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted text-uppercase fw-semibold small">Total Donors</span>
+                    <h2 class="display-6 fw-bold text-dark mt-1 mb-0">{{ stats.total }}</h2>
+                    <small class="text-secondary">Active registered donors</small>
+                </div>
+                <div class="bg-danger-subtle p-3 rounded-circle text-danger">
+                    <i class="bi bi-people-fill fs-3"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stat 2: Search Requests -->
+    <div class="col-md-4">
+        <div class="card custom-card stat-card p-3 p-lg-4" style="border-left-color: #0d6efd;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted text-uppercase fw-semibold small">Search Lookups</span>
+                    <h2 class="display-6 fw-bold text-dark mt-1 mb-0">{{ stats.requests }}</h2>
+                    <small class="text-secondary">Total search queries performed</small>
+                </div>
+                <div class="bg-primary-subtle p-3 rounded-circle text-primary">
+                    <i class="bi bi-search fs-3"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stat 3: Total DB Keys -->
+    <div class="col-md-4">
+        <div class="card custom-card stat-card p-3 p-lg-4" style="border-left-color: #198754;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span class="text-muted text-uppercase fw-semibold small">Database Records</span>
+                    <h2 class="display-6 fw-bold text-dark mt-1 mb-0">{{ stats['keys'] }}</h2>
+                    <small class="text-secondary">Total active database entries</small>
+                </div>
+                <div class="bg-success-subtle p-3 rounded-circle text-success">
+                    <i class="bi bi-database-fill-check fs-3"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Blood Group Distribution Progress Bars -->
+<div class="card custom-card p-4 mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold text-dark mb-0">
+            <i class="bi bi-pie-chart-fill text-danger me-2"></i> Donors per Blood Group
+        </h5>
+        <small class="text-muted">Live distribution across all cities</small>
+    </div>
+    <div class="row g-3">
+        {% for bg, count in stats.per_group.items() %}
+            {% set percent = (count / stats.max * 100) if stats.max > 0 else 0 %}
+            <div class="col-md-6">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="fw-semibold text-dark">
+                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle me-1">{{ bg }}</span>
+                    </span>
+                    <span class="text-muted small"><strong>{{ count }}</strong> donors ({{ percent|round(1) }}%)</span>
+                </div>
+                <div class="progress" style="height: 10px;" role="progressbar" aria-valuenow="{{ percent }}" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar bg-danger progress-bar-striped" style="width: {{ percent }}%"></div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Table of All Donors with CRUD Actions -->
+<div class="card custom-card overflow-hidden">
+    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 fw-bold text-dark">
+            <i class="bi bi-table text-danger me-2"></i> Registered Donor Roster ({{ donors|length }})
+        </h5>
+        <span class="badge bg-danger-subtle text-danger border border-danger-subtle">
+            Active Donors
+        </span>
+    </div>
+
+    {% if donors %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col" class="ps-3">ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Age</th>
+                        <th scope="col">Group</th>
+                        <th scope="col">City</th>
+                        <th scope="col">Mobile</th>
+                        <th scope="col">Last Donated</th>
+                        <th scope="col" class="text-center">Eligibility</th>
+                        <th scope="col" class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for donor in donors %}
+                        <tr>
+                            <td class="ps-3 fw-bold text-secondary">#{{ donor.id }}</td>
+                            <td class="fw-semibold text-dark">{{ donor.name }}</td>
+                            <td>{{ donor.age }}</td>
+                            <td>
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle">
+                                    {{ donor.group }}
+                                </span>
+                            </td>
+                            <td>{{ donor.city }}</td>
+                            <td>{{ donor.mobile }}</td>
+                            <td>
+                                {% if donor.last_donated and donor.last_donated != 'Never' %}
+                                    <span class="small text-muted">{{ donor.last_donated }}</span>
+                                {% else %}
+                                    <span class="badge bg-light text-secondary border small">Never</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                {% if donor.eligible %}
+                                    <span class="badge bg-success badge-status">
+                                        <i class="bi bi-check-circle-fill me-1"></i> Available
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-danger badge-status" title="90-day cooldown active">
+                                        <i class="bi bi-lock-fill me-1"></i> Unavailable (Cooldown)
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center gap-1">
+                                    <!-- Edit Action -->
+                                    <a href="{{ url_for('update', donor_id=donor.id) }}" 
+                                       class="btn btn-sm btn-outline-primary" 
+                                       title="Edit profile">
+                                        <i class="bi bi-pencil-square"></i> Edit
+                                    </a>
+
+                                    <!-- Record Donation Action (Disabled if already in 90-day cooldown) -->
+                                    <form action="{{ url_for('donate', donor_id=donor.id) }}" method="POST" class="d-inline">
+                                        <button type="submit" 
+                                                class="btn btn-sm btn-outline-success" 
+                                                {% if not donor.eligible %}disabled title="Donor already in 90-day cooldown"{% else %}title="Record new donation and set 90-day lock"{% endif %}>
+                                            <i class="bi bi-heart-pulse"></i> Donated
+                                        </button>
+                                    </form>
+
+                                    <!-- Delete Action with JS confirmation -->
+                                    <form action="{{ url_for('delete', donor_id=donor.id) }}" 
+                                          method="POST" 
+                                          class="d-inline" 
+                                          onsubmit="return confirm('Are you sure you want to delete donor #{{ donor.id }} ({{ donor.name }})?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete donor">
+                                            <i class="bi bi-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+            <h5 class="fw-bold mt-2">No donors currently registered</h5>
+            <p class="text-muted small">Use the button above to register the first donor.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
